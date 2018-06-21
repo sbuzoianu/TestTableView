@@ -9,17 +9,33 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    @IBOutlet var loadingView: UIView!
+    
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    @IBOutlet weak var offerTableView: UITableView!
+    
+    var countCell:Int? = nil
+    var indexTable:Int = 10
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        print("countCell = \(String(describing: countCell))")
+        activityIndicator.color = UIColor(red: 11/255, green: 86/255, blue: 14/255, alpha: 1)
+//        offerTableView.tableFooterView = loadingView
+
+        prepareTableView()
+
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    func prepareTableView() {
+        offerTableView.dataSource = self
+        print("ViewController - \(OfferTableViewCell.ReuseIdentifier)")
+        
+        let nib = UINib(nibName: OfferTableViewCell.NibName, bundle: .main)
+        offerTableView.register(nib, forCellReuseIdentifier: OfferTableViewCell.ReuseIdentifier)
     }
-
-
+    
 }
+
 
