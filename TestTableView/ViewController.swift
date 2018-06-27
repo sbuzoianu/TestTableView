@@ -28,9 +28,9 @@ class ViewController: UIViewController {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
-
+        
         prepareTableView()
-
+        
     }
     
     func prepareTableView() {
@@ -41,60 +41,43 @@ class ViewController: UIViewController {
         offerTableView.register(nib, forCellReuseIdentifier: OfferTableViewCell.ReuseIdentifier)
     }
     
-    
-    func getAdressName(coords: CLLocation) {
+    func createAddressFromCLPlaceMark(_ geoLoc: CLPlacemark) -> String {
+        var adressString : String = ""
 
-        CLGeocoder().reverseGeocodeLocation(coords) { (placemark, error) in
-            if error != nil {
-                
-                print("Hay un error")
-                
-            } else {
-                
-                let place = placemark! as [CLPlacemark]
-                
-                if place.count > 0 {
-                    let place = placemark![0]
-                    
-                    var adressString : String = ""
-                    
-                    if place.thoroughfare != nil {
-                        adressString = adressString + place.thoroughfare! + ", "
-                    }
-                    if place.subThoroughfare != nil {
-                        adressString = adressString + place.subThoroughfare! + "\n"
-                    }
-                    if place.locality != nil {
-                        adressString = adressString + place.locality! + " - "
-                    }
-                    if place.postalCode != nil {
-                        adressString = adressString + place.postalCode! + "\n"
-                    }
-                    if place.subAdministrativeArea != nil {
-                        adressString = adressString + place.subAdministrativeArea! + " - "
-                    }
-                    if place.country != nil {
-                        adressString = adressString + place.country!
-                    }
-                    
-                    print("adresa = \(adressString)")
-                }
-                
-            }
+        if geoLoc.thoroughfare != nil {
+            adressString = adressString + geoLoc.thoroughfare! + ", "
         }
+        if geoLoc.subThoroughfare != nil {
+            adressString = adressString + geoLoc.subThoroughfare! + "\n"
+        }
+        if geoLoc.locality != nil {
+            adressString = adressString + geoLoc.locality! + " - "
+        }
+        if geoLoc.postalCode != nil {
+            adressString = adressString + geoLoc.postalCode! + "\n"
+        }
+        if geoLoc.subAdministrativeArea != nil {
+            adressString = adressString + geoLoc.subAdministrativeArea! + " - "
+        }
+        if geoLoc.country != nil {
+            adressString = adressString + geoLoc.country!
+        }
+        return adressString
     }
-
-    
 }
 
 extension ViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let lat = locations.last?.coordinate.latitude, let long = locations.last?.coordinate.longitude {
-            print("\(lat),\(long)")
-            let loc: CLLocation = CLLocation(latitude:lat, longitude: long)
-            getAdressName(coords: loc)
+            print("coords - \(lat),\(long)")
+
             lookUpCurrentLocation { geoLoc in
                 print("GEO LOCATION = \(geoLoc?.locality ?? "locatie necunoscuta")")
+                guard let geoLoc = geoLoc else {
+                    print("No address")
+                    return
+                }
+                print("adresa = \(self.createAddressFromCLPlaceMark(geoLoc))")
             }
             
         } else {
