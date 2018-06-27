@@ -43,7 +43,7 @@ class ViewController: UIViewController {
     
     func createAddressFromCLPlaceMark(_ geoLoc: CLPlacemark) -> String {
         var adressString : String = ""
-
+        
         if geoLoc.thoroughfare != nil {
             adressString = adressString + geoLoc.thoroughfare! + ", "
         }
@@ -70,7 +70,7 @@ extension ViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let lat = locations.last?.coordinate.latitude, let long = locations.last?.coordinate.longitude {
             print("coords - \(lat),\(long)")
-
+            
             lookUpCurrentLocation { geoLoc in
                 print("GEO LOCATION = \(geoLoc?.locality ?? "locatie necunoscuta")")
                 guard let geoLoc = geoLoc else {
